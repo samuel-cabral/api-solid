@@ -7,6 +7,7 @@ interface CreateUserParams {
 }
 
 export interface UsersRepository {
+  findById: (userId: string) => Promise<User | null>
   findByEmail: (email: string) => Promise<User | null>
   create: (data: CreateUserParams) => Promise<User>
 }
