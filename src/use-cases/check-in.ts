@@ -46,6 +46,7 @@ export class CheckInUseCase {
         longitude: gym.longitude.toNumber(),
       },
     )
+    console.log(`Calculated distance: ${distance} km`)
 
     const MAX_DISTANCE_IN_KILOMETERS = 0.1
 

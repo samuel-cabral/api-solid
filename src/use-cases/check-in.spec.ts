@@ -6,6 +6,7 @@ import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 
 import { CheckInUseCase } from './check-in'
+import { MaxDistanceError } from './errors/max-distance-error'
 import { MaxNumberOfCheckInsError } from './errors/max-number-of-check-ins-error'
 
 let usersRepository: InMemoryUsersRepository
@@ -124,5 +125,33 @@ describe('Check-in use case', () => {
         validatedAt: new Date(),
       }),
     ).resolves.not.toThrow()
+  })
+
+  it('should not be able to check in on distant gym', async () => {
+    vi.setSystemTime(new Date(2024, 9, 24, 8, 0, 0))
+
+    const createdUser = await usersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
+
+    const createdGym = await gymsRepository.create({
+      title: 'JavaScript Gym',
+      description: null,
+      phone: null,
+      latitude: -3.8406211,
+      longitude: -38.566664,
+    })
+
+    await expect(() =>
+      sut.execute({
+        userId: createdUser.id,
+        gymId: createdGym.id,
+        userLatitude: -3.7724425,
+        userLongitude: -38.519132,
+        validatedAt: new Date(),
+      }),
+    ).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })
