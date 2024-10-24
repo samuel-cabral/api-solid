@@ -13,6 +13,7 @@ interface CheckInUseCaseRequest {
   gymId: string
   userLatitude: number
   userLongitude: number
+  validatedAt: Date
 }
 
 interface CheckInUseCaseResponse {
@@ -30,6 +31,7 @@ export class CheckInUseCase {
     gymId,
     userLatitude,
     userLongitude,
+    validatedAt,
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
     const gym = await this.gymsRepository.findById(gymId)
 
@@ -53,7 +55,7 @@ export class CheckInUseCase {
 
     const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(
       userId,
-      new Date(),
+      validatedAt,
     )
 
     if (checkInOnSameDay) {
