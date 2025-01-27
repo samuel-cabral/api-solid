@@ -1,6 +1,9 @@
 name: Run Unit Tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
 
 jobs:
   run-unit-tests:
@@ -18,4 +21,7 @@ jobs:
         cache: 'pnpm'
 
     - run: pnpm install
-    - run: pnpm test
+    - name: Generate Prisma Client
+      run: pnpm prisma generate
+    - name: Run unit tests
+      run: pnpm test
